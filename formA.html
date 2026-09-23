@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,30 +9,49 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .anim-pop { animation: popIn 0.3s ease forwards; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .anim-pop {
+            animation: popIn 0.3s ease forwards;
+        }
+
         @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body class="bg-[#EBF4F6] min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-xl p-6 md:p-8 border border-[#D0E8F2] relative">
-        
+
         <!-- Header & Progress -->
         <div id="header-container" class="flex justify-between items-center mb-6 border-b border-[#EBF4F6] pb-4">
             <h1 class="text-lg font-bold text-[#2C3E50]">nihongo kuisu 🌸</h1>
-            <span id="progress-text" class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">Soal 1 / 40</span>
+            <span id="progress-text"
+                class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">Soal 1 / 40</span>
         </div>
 
         <!-- Area Kuis Utama -->
         <div id="quiz-container" class="space-y-4">
             <div id="question-list" class="space-y-3"></div>
             <div class="flex items-center justify-between gap-3 pt-2 border-t border-[#EBF4F6] mt-2">
-                <span id="progress-text" class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">0 / 40 terjawab</span>
-                <button id="submit-btn" class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-5 py-3 rounded-2xl shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="progress-text"
+                    class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">0 / 40
+                    terjawab</span>
+                <button id="submit-btn"
+                    class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-5 py-3 rounded-2xl shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                     Cek Hasil
                 </button>
             </div>
@@ -44,7 +64,8 @@
                 <h2 class="text-2xl font-bold text-[#2C3E50]">Kuis Selesai!</h2>
                 <p class="text-[#79A3B1] text-sm mt-1">Berikut adalah ringkasan hasil jawabanmu:</p>
                 <div class="text-4xl font-black text-[#4D96FF] my-4" id="final-score">0 / 40</div>
-                <button onclick="restartQuiz()" class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-8 py-3 rounded-2xl shadow-md transition-all cursor-pointer">
+                <button onclick="restartQuiz()"
+                    class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-8 py-3 rounded-2xl shadow-md transition-all cursor-pointer">
                     Ulangi Kuis (Soal Diacak Ulang) 🔄
                 </button>
             </div>
@@ -90,7 +111,7 @@
             { q: "ほたてがいのかいどくはおもにちゅうちょうせんにたまる。", isFalse: true },
             { q: "（Gambar ilustrasi proses/siklus hidup）", isFalse: false },
             { q: "ほたてがいにつかわれるさいびょうきをうみにいれるときはいちにちにすべてをいれる。", isFalse: true },
-            { q: "ほたてがいのかいどくはおもにちゅうちょうせんにたまる。(2)", isFalse: false },
+            { q: "ほたてがいのかいどくはおもにちゅうちょうせんにたまる。", isFalse: false },
             { q: "ほたてがいのかいどくによってひとがしぬことがある。", isFalse: false },
             { q: "2017ねんにおいて、にほんでもっともおおくのまがきがようしょくされているところはおかやまけんである。", isFalse: true },
             { q: "まがきがようせい（らーば）のときは、さかなやほかのどうぶつにたべられてかずがすくなくなっていく。", isFalse: false },
@@ -238,4 +259,5 @@
         initQuiz();
     </script>
 </body>
+
 </html>
