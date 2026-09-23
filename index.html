@@ -1,13 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yosoku Quiz</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7ff, #e8edff);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .logo {
+        font-size: 52px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 8px;
+        color: #111827;
+    }
+
+    .subtitle {
+        color: #6b7280;
+        margin-bottom: 35px;
+        font-size: 15px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        padding: 18px 20px;
+        border-radius: 15px;
+        background: #f8fafc;
+        color: #111827;
+        border: 1px solid #e5e7eb;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        background: #eef2ff;
+    }
+
+    .btn-text {
+        text-align: left;
+    }
+
+    .btn-text strong {
+        display: block;
+        font-size: 17px;
+        margin-bottom: 4px;
+    }
+
+    .btn-text span {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .arrow {
+        font-size: 22px;
+        color: #9ca3af;
+    }
+
+    footer {
+        margin-top: 25px;
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    @media (max-width: 500px) {
+        h1 {
+            font-size: 30px;
+        }
+
+        .card {
+            padding: 22px;
+        }
+    }
+</style>
+```
+
 </head>
+
 <body>
-    <button href="formB.html">form b</button>
-    <button href="formA.html">form a</button>
+
+```
+<div class="container">
+
+    <div class="logo">🎌</div>
+
+    <h1>Yosoku Quiz</h1>
+
+    <p class="subtitle">
+        Latihan soal budidaya perikanan Jepang
+    </p>
+
+    <div class="card">
+
+        <h2>Pilih Form Quiz</h2>
+
+        <div class="buttons">
+
+            <a href="formA.html" class="btn">
+                <div class="btn-left">
+                    <div class="icon">📝</div>
+
+                    <div class="btn-text">
+                        <strong>Form A</strong>
+                        <span>Latihan soal pilihan Form A</span>
+                    </div>
+                </div>
+
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="formB.html" class="btn">
+                <div class="btn-left">
+                    <div class="icon">🐟</div>
+
+                    <div class="btn-text">
+                        <strong>Form B</strong>
+                        <span>Latihan soal dengan gambar</span>
+                    </div>
+                </div>
+
+                <div class="arrow">›</div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <footer>
+        Yosoku Quiz • Japanese Aquaculture Practice
+    </footer>
+
+</div>
+```
 
 </body>
 </html>
