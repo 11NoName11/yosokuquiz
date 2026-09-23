@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Nihongo - Maru & Batsu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .anim-pop { animation: popIn 0.3s ease forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-[#EBF4F6] min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-xl p-6 md:p-8 border border-[#D0E8F2] relative">
+        
+        <!-- Header & Progress -->
+        <div id="header-container" class="flex justify-between items-center mb-6 border-b border-[#EBF4F6] pb-4">
+            <h1 class="text-lg font-bold text-[#2C3E50]">nihongo kuisu 🌸</h1>
+            <span id="progress-text" class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">Soal 1 / 40</span>
+        </div>
+
+        <!-- Area Kuis Utama -->
+        <div id="quiz-container">
+            <div class="bg-[#F0F8FF] rounded-2xl p-6 mb-6 text-center min-h-[140px] flex flex-col justify-center items-center border border-[#D0E8F2]">
+                <p id="question-text" class="text-lg md:text-xl font-bold text-[#2C3E50] leading-relaxed">Memuat soal...</p>
+            </div>
+
+            <!-- Tombol Batsu (✕) & Maru (◯) -->
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="answerQuestion(false)" class="group cursor-pointer bg-white border-4 border-[#FF6B6B] hover:bg-[#FF6B6B] text-[#FF6B6B] hover:text-white font-bold py-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col items-center justify-center gap-1 active:scale-95">
+                    <span class="text-3xl group-hover:scale-110 transition-transform">✕</span>
+                    <span class="text-xs tracking-wider uppercase font-semibold">Batsu (Salah)</span>
+                </button>
+                <button onclick="answerQuestion(true)" class="group cursor-pointer bg-white border-4 border-[#4D96FF] hover:bg-[#4D96FF] text-[#4D96FF] hover:text-white font-bold py-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col items-center justify-center gap-1 active:scale-95">
+                    <span class="text-3xl group-hover:scale-110 transition-transform">◯</span>
+                    <span class="text-xs tracking-wider uppercase font-semibold">Maru (Benar)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Area Hasil Akhir & Rekap -->
+        <div id="result-container" class="hidden anim-pop">
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-2">🎉</div>
+                <h2 class="text-2xl font-bold text-[#2C3E50]">Kuis Selesai!</h2>
+                <p class="text-[#79A3B1] text-sm mt-1">Berikut adalah ringkasan hasil jawabanmu:</p>
+                <div class="text-4xl font-black text-[#4D96FF] my-4" id="final-score">0 / 40</div>
+                <button onclick="restartQuiz()" class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-8 py-3 rounded-2xl shadow-md transition-all cursor-pointer">
+                    Ulangi Kuis (Soal Diacak Ulang) 🔄
+                </button>
+            </div>
+
+            <!-- Detail Review Jawaban -->
+            <h3 class="font-bold text-[#2C3E50] mb-3 text-sm border-t border-[#EBF4F6] pt-4">Detail Jawaban:</h3>
+            <div id="review-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-2"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data 40 Soal Baru (isFalse: true = Batsu, isFalse: false = Maru)
+        const rawQuizData = [
+            { q: "2017ねんにおけるにほんのようしょくせいさんりょうは、すいさんそうごうイン料の1/4をしめ、ようしょくさんぎょうなさんぎょうとなっている", isFalse: false },
+            { q: "むきゅうじによるようしょくとは、てんねんのみずのなかのエサをりようしてようしょくするほうほうである", isFalse: false },
+            { q: "ようしょくきょうしゅうは、くちにほうりつにしたがってめんきょがひつようである", isFalse: false },
+            { q: "ようしょくはひとのてでかんりできるしせつのなかにしようをいれてしょうしゅうせいさんにそだてるほうほうである", isFalse: false },
+            { q: "くるまえびのようしょくでは、じんこうしゅびょうじょうがつかわれる", isFalse: false },
+            { q: "うなぎのようしょくでは、じんこうしゅびょうじょうがつかわれる", isFalse: true },
+            { q: "さかながせいちょうすると、ちいさいときとくらべてににくくなる", isFalse: false },
+            { q: "つぎのずは、いかりにむすびつき、がいようしょくにセッティングときの、いかりむすびである", isFalse: false },
+            { q: "つぎのずは、むすびめがほどけにくく、あみあみをあむときにつかうかえるたである", isFalse: false },
+            { q: "たいおいしんや、いすふん、かだうむは、ひとにひがいをあたえる", isFalse: false },
+            { q: "ふえずてたとくテイのしょくぶつプランクトンがげんいんで、すいしつじょうのさんえんがへる", isFalse: false },
+            { q: "がいこくでじしんがおきても、にほんにつなががやってくることはない", isFalse: true },
+            { q: "2017ねんにおけるにほんのぎょぎょうようしょくのせいさんりょうは、ふくがもっともおく、つぎにひらめ、しまおにじまんである", isFalse: true },
+            { q: "ぶりやかんぱちのようしょくは、せいちょうりつにあわせて、いけすにいれるみつどをへんかさせる", isFalse: false },
+            { q: "ぶりやかんぱちのようしょくは、いうもすでいさくのわんくらんせつをしない", isFalse: true },
+            { q: "ようしょくされたぶりやかんぱちはかつおじょうしちにおくられることはない", isFalse: true },
+            { q: "ようしょくせいだいはすいおんが18℃いじょうになると、えさをたべなくなる", isFalse: true },
+            { q: "ようしょくせいだいはすいおんざんえんがさがるとこうどうにへんかんがある", isFalse: false },
+            { q: "ようしょくせいだいはひやしやすいので、ひよけをいけすにとりつける", isFalse: false },
+            { q: "ひとつのいけすにいれるさかなのかずは、さかなのせいちょうにあわせてふやす", isFalse: true },
+            { q: "ぎょるいいょうしょくでは、かんきょうをちょうせいして、せいきてきなせいいじゅくをうながして、しんぷんをようせいする", isFalse: false },
+            { q: "しんぎょこほのさかなを、すいそうにいれていても、かってにさんらんすることはない", isFalse: true },
+            { q: "ようしょくくようのはいごりょうりょうには、ふくぞうのせいいほうがある", isFalse: false },
+            { q: "さかなのびょうきには、ちりょうほうやよぼうほうがある", isFalse: false },
+            { q: "いけすのなかでしんでしまったさかなをとりだす", isFalse: false },
+            { q: "あかしおは、ふゆのさむいじきにははっせいする", isFalse: true },
+            { q: "ほたてがいがようせい（らーば）のときは、ほかのどうぶつからにげることができる", isFalse: true },
+            { q: "つぎのずのやじるし（→）はかくこうである", isFalse: false },
+            { q: "ほたてがいのちゅうちょうせんにはぐりにーげんがふくまれている", isFalse: true },
+            { q: "ほたてがいようしょくにつかわれるさいびょうきをうみにいれるときは、いけすにすべてをいれる", isFalse: true },
+            { q: "ほたてがいようしょくのあいだ、かごにいれるほたてがいのかずは、せいちょうにあわせていれるかずをかえる", isFalse: false },
+            { q: "ほたてがいのかいどくによってひどがしぬことがある", isFalse: true },
+            { q: "ほたてがいのかいどくはかいがじぶんでどくをつくりだすことによっておきる", isFalse: true },
+            { q: "2017ねんにおけるにほんのかいるいようしょくのすべては、まがきようしょくである", isFalse: false },
+            { q: "ようしょくしているまがきは2〜3ねんでやく10せんちめーとる（cm）にせいちょうする", isFalse: false },
+            { q: "まがきはなつのさんらんまえ、めすはらんし、おすはせいしをたくわえている", isFalse: false },
+            { q: "げんだいのまがきようしょくのしりゅうはてんねんさいびょうである", isFalse: false },
+            { q: "まがきのようしょくほうほうのひとつにいかだすいかしきがそんざいする。つぎのずのせいぶつはまがきをようしょくせつにふちゃくするせいぶつである", isFalse: false },
+            { q: "[がぞうのもんだい]", isFalse: false },
+            { q: "まがきをしゅっかするときはようしょくかいいきをしるす", isFalse: false }
+        ];
+
+        let quizData = [];
+        let currentIdx = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initQuiz() {
+            quizData = shuffleArray(rawQuizData);
+            currentIdx = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById("quiz-container").classList.remove("hidden");
+            document.getElementById("header-container").classList.remove("hidden");
+            document.getElementById("result-container").classList.add("hidden");
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIdx < quizData.length) {
+                const current = quizData[currentIdx];
+                document.getElementById("question-text").textContent = current.q;
+                document.getElementById("progress-text").textContent = `Soal ${currentIdx + 1} / ${quizData.length}`;
+            } else {
+                showResult();
+            }
+        }
+
+        // userChoice: true = Maru (◯), false = Batsu (✕)
+        function answerQuestion(userChoice) {
+            const current = quizData[currentIdx];
+            const correctChoice = !current.isFalse; 
+            const isCorrect = (userChoice === correctChoice);
+
+            if (isCorrect) score++;
+
+            userAnswers.push({
+                question: current.q,
+                userChoice: userChoice, 
+                correctChoice: correctChoice, 
+                isCorrect: isCorrect
+            });
+
+            currentIdx++;
+            loadQuestion();
+        }
+
+        function showResult() {
+            document.getElementById("quiz-container").classList.add("hidden");
+            document.getElementById("header-container").classList.add("hidden");
+            document.getElementById("result-container").classList.remove("hidden");
+            document.getElementById("final-score").textContent = `${score} / ${quizData.length}`;
+
+            const reviewList = document.getElementById("review-list");
+            reviewList.innerHTML = "";
+
+            userAnswers.forEach((item, index) => {
+                const userSymbol = item.userChoice ? "◯ (Maru)" : "✕ (Batsu)";
+                const correctSymbol = item.correctChoice ? "◯ (Maru)" : "✕ (Batsu)";
+                
+                const card = document.createElement("div");
+                card.className = `p-3 rounded-2xl border text-sm ${item.isCorrect ? 'bg-[#F0F8FF] border-[#D0E8F2]' : 'bg-[#FFF5F5] border-[#FED7D7]'}`;
+                
+                card.innerHTML = `
+                    <div class="font-semibold text-[#2C3E50] mb-1">Soal ${index + 1}: ${item.question}</div>
+                    <div class="flex justify-between text-xs mt-2">
+                        <span class="${item.isCorrect ? 'text-blue-600 font-bold' : 'text-red-500 font-bold'}">
+                            Jawabanmu: ${userSymbol} ${item.isCorrect ? '✓' : '✗'}
+                        </span>
+                        <span class="text-gray-500">Kunci: ${correctSymbol}</span>
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Mulai kuis otomatis saat dimuat
+        initQuiz();
+    </script>
+</body>
+</html>
