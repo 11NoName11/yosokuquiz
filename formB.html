@@ -27,20 +27,12 @@
         </div>
 
         <!-- Area Kuis Utama -->
-        <div id="quiz-container">
-            <div class="bg-[#F0F8FF] rounded-2xl p-6 mb-6 text-center min-h-[140px] flex flex-col justify-center items-center border border-[#D0E8F2]">
-                <p id="question-text" class="text-lg md:text-xl font-bold text-[#2C3E50] leading-relaxed">Memuat soal...</p>
-            </div>
-
-            <!-- Tombol Batsu (✕) & Maru (◯) -->
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="answerQuestion(false)" class="group cursor-pointer bg-white border-4 border-[#FF6B6B] hover:bg-[#FF6B6B] text-[#FF6B6B] hover:text-white font-bold py-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col items-center justify-center gap-1 active:scale-95">
-                    <span class="text-3xl group-hover:scale-110 transition-transform">✕</span>
-                    <span class="text-xs tracking-wider uppercase font-semibold">Batsu (Salah)</span>
-                </button>
-                <button onclick="answerQuestion(true)" class="group cursor-pointer bg-white border-4 border-[#4D96FF] hover:bg-[#4D96FF] text-[#4D96FF] hover:text-white font-bold py-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col items-center justify-center gap-1 active:scale-95">
-                    <span class="text-3xl group-hover:scale-110 transition-transform">◯</span>
-                    <span class="text-xs tracking-wider uppercase font-semibold">Maru (Benar)</span>
+        <div id="quiz-container" class="space-y-4">
+            <div id="question-list" class="space-y-3"></div>
+            <div class="flex items-center justify-between gap-3 pt-2 border-t border-[#EBF4F6] mt-2">
+                <span id="progress-text" class="text-sm font-semibold text-[#79A3B1] bg-[#F0F8FF] px-3 py-1 rounded-full">0 / 40 terjawab</span>
+                <button id="submit-btn" class="bg-[#4D96FF] hover:bg-[#3b82f6] text-white font-bold px-5 py-3 rounded-2xl shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    Cek Hasil
                 </button>
             </div>
         </div>
@@ -99,7 +91,7 @@
             { q: "ほたてがいようしょくにつかわれるさいびょうきをうみにいれるときは、いけすにすべてをいれる", isFalse: true },
             { q: "ほたてがいようしょくのあいだ、かごにいれるほたてがいのかずは、せいちょうにあわせていれるかずをかえる", isFalse: false },
             { q: "ほたてがいのかいどくによってひどがしぬことがある", isFalse: true },
-            { q: "ほたてがいのかいどくはかいがじぶんでどくをつくりだすことによっておきる", isFalse: true },
+            { q: "ほたteがいのかいどくはかいがじぶんでどくをつくりだすことによっておきる", isFalse: true },
             { q: "2017ねんにおけるにほんのかいるいようしょくのすべては、まがきようしょくである", isFalse: false },
             { q: "ようしょくしているまがきは2〜3ねんでやく10せんちめーとる（cm）にせいちょうする", isFalse: false },
             { q: "まがきはなつのさんらんまえ、めすはらんし、おすはせいしをたくわえている", isFalse: false },
@@ -110,7 +102,6 @@
         ];
 
         let quizData = [];
-        let currentIdx = 0;
         let score = 0;
         let userAnswers = [];
 
@@ -124,43 +115,89 @@
         }
 
         function initQuiz() {
-            quizData = shuffleArray(rawQuizData);
-            currentIdx = 0;
+            quizData = shuffleArray(rawQuizData).map((item) => ({
+                ...item,
+                userChoice: null
+            }));
             score = 0;
             userAnswers = [];
+
             document.getElementById("quiz-container").classList.remove("hidden");
             document.getElementById("header-container").classList.remove("hidden");
             document.getElementById("result-container").classList.add("hidden");
-            loadQuestion();
+            renderQuestions();
+            updateProgress();
         }
 
-        function loadQuestion() {
-            if (currentIdx < quizData.length) {
-                const current = quizData[currentIdx];
-                document.getElementById("question-text").textContent = current.q;
-                document.getElementById("progress-text").textContent = `Soal ${currentIdx + 1} / ${quizData.length}`;
-            } else {
-                showResult();
-            }
-        }
+        function renderQuestions() {
+            const list = document.getElementById("question-list");
+            list.innerHTML = "";
 
-        // userChoice: true = Maru (◯), false = Batsu (✕)
-        function answerQuestion(userChoice) {
-            const current = quizData[currentIdx];
-            const correctChoice = !current.isFalse; 
-            const isCorrect = (userChoice === correctChoice);
+            quizData.forEach((item, index) => {
+                const isSelectedTrue = item.userChoice === true;
+                const isSelectedFalse = item.userChoice === false;
 
-            if (isCorrect) score++;
+                const card = document.createElement("div");
+                card.className = "bg-[#F0F8FF] rounded-2xl p-4 border border-[#D0E8F2]";
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div class="flex-1">
+                            <div class="text-[10px] uppercase tracking-[0.2em] font-bold text-[#79A3B1] mb-2">Soal ${index + 1}</div>
+                            <p class="text-sm md:text-base font-medium text-[#2C3E50] leading-relaxed">${item.q}</p>
+                        </div>
+                        <div class="flex gap-2 md:flex-col lg:flex-row shrink-0">
+                            <button class="answer-btn ${isSelectedFalse ? 'bg-[#FF6B6B] text-white border-[#FF6B6B]' : 'bg-white text-[#FF6B6B] border-[#FF6B6B]'} border-2 font-bold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95" data-index="${index}" data-choice="false">
+                                ✕ Batsu
+                            </button>
+                            <button class="answer-btn ${isSelectedTrue ? 'bg-[#4D96FF] text-white border-[#4D96FF]' : 'bg-white text-[#4D96FF] border-[#4D96FF]'} border-2 font-bold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95" data-index="${index}" data-choice="true">
+                                ◯ Maru
+                            </button>
+                        </div>
+                    </div>
+                `;
 
-            userAnswers.push({
-                question: current.q,
-                userChoice: userChoice, 
-                correctChoice: correctChoice, 
-                isCorrect: isCorrect
+                list.appendChild(card);
             });
+        }
 
-            currentIdx++;
-            loadQuestion();
+        function updateProgress() {
+            const answered = quizData.filter((item) => item.userChoice !== null).length;
+            const progressText = document.getElementById("progress-text");
+            progressText.textContent = `${answered} / ${quizData.length} terjawab`;
+            document.getElementById("submit-btn").disabled = answered !== quizData.length;
+        }
+
+        document.getElementById("question-list").addEventListener("click", (event) => {
+            const button = event.target.closest(".answer-btn");
+            if (!button) return;
+
+            const index = Number(button.dataset.index);
+            const userChoice = button.dataset.choice === "true";
+            quizData[index].userChoice = userChoice;
+            renderQuestions();
+            updateProgress();
+        });
+
+        function submitQuiz() {
+            const unanswered = quizData.some((item) => item.userChoice === null);
+            if (unanswered) {
+                alert("Jawab semua soal dulu sebelum cek hasil.");
+                return;
+            }
+
+            score = quizData.reduce((total, item) => {
+                const correctChoice = !item.isFalse;
+                return total + (item.userChoice === correctChoice ? 1 : 0);
+            }, 0);
+
+            userAnswers = quizData.map((item) => ({
+                question: item.q,
+                userChoice: item.userChoice,
+                correctChoice: !item.isFalse,
+                isCorrect: item.userChoice === !item.isFalse
+            }));
+
+            showResult();
         }
 
         function showResult() {
@@ -175,13 +212,13 @@
             userAnswers.forEach((item, index) => {
                 const userSymbol = item.userChoice ? "◯ (Maru)" : "✕ (Batsu)";
                 const correctSymbol = item.correctChoice ? "◯ (Maru)" : "✕ (Batsu)";
-                
+
                 const card = document.createElement("div");
                 card.className = `p-3 rounded-2xl border text-sm ${item.isCorrect ? 'bg-[#F0F8FF] border-[#D0E8F2]' : 'bg-[#FFF5F5] border-[#FED7D7]'}`;
-                
+
                 card.innerHTML = `
                     <div class="font-semibold text-[#2C3E50] mb-1">Soal ${index + 1}: ${item.question}</div>
-                    <div class="flex justify-between text-xs mt-2">
+                    <div class="flex justify-between text-xs mt-2 gap-4">
                         <span class="${item.isCorrect ? 'text-blue-600 font-bold' : 'text-red-500 font-bold'}">
                             Jawabanmu: ${userSymbol} ${item.isCorrect ? '✓' : '✗'}
                         </span>
@@ -196,7 +233,8 @@
             initQuiz();
         }
 
-        // Mulai kuis otomatis saat dimuat
+        document.getElementById("submit-btn").addEventListener("click", submitQuiz);
+
         initQuiz();
     </script>
 </body>
