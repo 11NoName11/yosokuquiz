@@ -104,7 +104,7 @@ Beberapa fitur yang dapat dikembangkan:
 
 ## 👨‍💻 Author
 
-Made with ❤️ by **11NoName11**
+Made with ❤️ by **@rahawaeh_113**
 
 GitHub: [@11NoName11](https://github.com/11NoName11)
 
